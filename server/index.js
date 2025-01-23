@@ -3,9 +3,16 @@ const puppeteer = require('puppeteer');
 const cors = require('cors');
 const fs = require('fs').promises;
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const app = express();
 const port = 3001;
+const API_KEY = process.env.CRYPTOPANIC_API_KEY;
+
+if (!API_KEY) {
+  console.error('CRYPTOPANIC_API_KEY is not set in .env file');
+  process.exit(1);
+}
 
 app.use(cors());
 app.use(express.json());
@@ -17,7 +24,7 @@ async function fetchAndSaveLatestNews() {
     
     // Fetch the latest news from CryptoPanic
     const response = await fetch(
-      'https://cryptopanic.com/api/v1/posts/?auth_token=9dab69f78b350e06ac97aee9654e25828a969731&currencies=BTC&kind=news&limit=10'
+      `https://cryptopanic.com/api/v1/posts/?auth_token=${API_KEY}&currencies=BTC&kind=news&limit=10`
     );
     
     if (!response.ok) {
@@ -47,7 +54,7 @@ async function fetchAndSaveLatestNews() {
         // Extract the content and source link
         const result = await page.evaluate(() => {
           const contentElement = document.querySelector('.description-body');
-          const sourceLinkElement = document.querySelector('.post-title a');
+          const sourceLinkElement = document.querySelector('.post-title a[target="_blank"]');
           
           return {
             content: contentElement ? contentElement.innerText : null,
@@ -118,9 +125,9 @@ app.post('/fetch-content', async (req, res) => {
       return contentElement ? contentElement.innerText : null;
     });
 
-    // Extract the original source link
+    // Extract the original source link with updated selector
     const sourceLink = await page.evaluate(() => {
-      const linkElement = document.querySelector('.post-title a');
+      const linkElement = document.querySelector('.post-title a[target="_blank"]');
       return linkElement ? linkElement.href : null;
     });
 
