@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { createChart, type IChartApi, type DeepPartial, type ChartOptions } from 'lightweight-charts';
+import { createChart, type IChartApi,UTCTimestamp } from 'lightweight-charts';
 import type { FormattedCandleData } from '../types';
 
 interface ChartProps {
@@ -39,7 +39,10 @@ const Chart = ({ data, loading }: ChartProps) => {
       wickDownColor: '#ef5350',
     });
 
-    candlestickSeries.setData(data);
+    candlestickSeries.setData(data.map(item => ({
+      ...item,
+      time: item.time as UTCTimestamp
+    })));
     chartRef.current = chart;
 
     const handleResize = () => {
