@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Newspaper, ExternalLink } from 'lucide-react';
+import config from '../config';
 
 interface NewsItem {
   id: number;
@@ -35,7 +36,7 @@ const News = () => {
 
   const fetchNews = async (pageNum: number) => {
     try {
-      const response = await fetch(`http://localhost:3001/latest-news?page=${pageNum}&limit=5`);
+      const response = await fetch(`${config.apiBaseUrl}/latest-news?page=${pageNum}&limit=5`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch news');

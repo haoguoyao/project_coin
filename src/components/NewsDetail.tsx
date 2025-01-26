@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Send } from 'lucide-react';
+import config from '../config';
 
 interface NewsDetailState {
   title: string;
@@ -63,7 +64,7 @@ const NewsDetail = () => {
         .replace('{title}', state.title)
         .replace('{content}', state.content);
 
-      const response = await fetch('http://localhost:3001/analyze', {
+      const response = await fetch(`${config.apiBaseUrl}/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +94,7 @@ const NewsDetail = () => {
     setNewMessage('');
 
     try {
-      const response = await fetch('http://localhost:3001/chat', {
+      const response = await fetch(`${config.apiBaseUrl}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

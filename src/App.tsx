@@ -91,7 +91,7 @@ function App() {
   );
 
   return (
-    <Router>
+    <Router basename="/">
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/news-detail" element={<NewsDetail />} />
