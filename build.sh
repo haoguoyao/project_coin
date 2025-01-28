@@ -8,6 +8,7 @@ rm -rf deploy
 mkdir -p deploy
 cp -r dist deploy/
 cp -r server/* deploy/
+cp -r .ebextensions deploy/
 cp server/package.json deploy/package.json
 cp .env deploy/
 cp Procfile deploy/Procfile
@@ -16,5 +17,5 @@ cp Procfile deploy/Procfile
 cd deploy
 rm -rf node_modules
 rm news.db
-zip -r ../deploy_zip/deploy_16.zip .
+zip -r ../deploy_zip/deploy_18.zip .
 cd ..

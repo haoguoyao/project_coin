@@ -94,12 +94,12 @@ async function fetchAndSaveLatestNews() {
     for (const item of newsItems) {
       try {
         console.log(`Processing news: ${item.title} ${item.url}`);
-        await page.goto(item.url, { waitUntil: 'networkidle0' });
+        await page.goto(item.url, { waitUntil: 'domcontentloaded' , timeout: 10000 });
         
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // await new Promise(resolve => setTimeout(resolve, 1000));
         // Wait for and extract the content
-        await page.waitForSelector('.description-body', { timeout: 10000 });
-        await page.waitForSelector('.post-title a[target="_blank"]', { timeout: 10000 });
+        await page.waitForSelector('.description-body', { timeout: 5000 });
+        await page.waitForSelector('.post-title a[target="_blank"]', { timeout: 5000 });
 
 
         // Extract the content and source link
