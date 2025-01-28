@@ -77,10 +77,14 @@ async function fetchAndSaveLatestNews() {
     const data = await response.json();
     const newsItems = data.results;
 
-    // Launch browser
-    browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    const puppeteer = require('puppeteer-extra');
+    const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+    
+    puppeteer.use(StealthPlugin());
+    
+    const browser = await puppeteer.launch({
+      headless: true, // or true if you still want to be headless
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
     // Create a single page to reuse
@@ -89,14 +93,14 @@ async function fetchAndSaveLatestNews() {
     // Process each news item sequentially
     for (const item of newsItems) {
       try {
-        console.log(`Processing news: ${item.title}`);
+        console.log(`Processing news: ${item.title} ${item.url}`);
         await page.goto(item.url, { waitUntil: 'networkidle0' });
-
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
         // Wait for and extract the content
         await page.waitForSelector('.description-body', { timeout: 10000 });
-        setTimeout(() => {
-          console.log("1 second later");
-        }, 2000);
+        await page.waitForSelector('.post-title a[target="_blank"]', { timeout: 10000 });
+
 
         // Extract the content and source link
         const result = await page.evaluate(() => {
@@ -108,6 +112,9 @@ async function fetchAndSaveLatestNews() {
             sourceLink: sourceLinkElement ? sourceLinkElement.href : null
           };
         });
+        //print content
+        // console.log(`Content: ${result.content}`);
+        // console.log(`Source link: ${result.sourceLink}`);
 
         // Insert into database
         await new Promise((resolve, reject) => {
